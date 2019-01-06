@@ -103,7 +103,6 @@ class FileProcessor:
             except FileNotFoundError:
                 self.log.error('Cannot copy ' + file + ' --> ' + new_filename + '. Check that the destination directory exists and is writable.')
 
-
             # TODO wrap this in some kind of exception
             if file_extension.lower() == 'pdf':
                 # if the file is a PDF, then send it through make_pdf_thumbnail
@@ -114,13 +113,13 @@ class FileProcessor:
                 thumbnail_filename = self.make_image_thumbnail(file, fuuid)
 
             try:
-                print('fake db insert')
-                # data = ('', '', new_filename, thumbnail_filename, file, 'NEW', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                # c = self.dbconn.cursor()
-                # c.execute('INSERT INTO documents VALUES(?,?,?,?,?,?,?)', data)
-                # self.dbconn.commit()
-            except:
-                self.log.error('Cannot insert ' + new_filename + ' into the documents table.')
+                data = ('New Title', 'New Description', new_filename, thumbnail_filename, file, 'NEW', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                print("inserting " + str(data))
+                c = self.dbconn.cursor()
+                c.execute("INSERT INTO document (title, description, document_filename, thumbnail_filename, original_filename, status, created) VALUES (%s,%s,%s,%s,%s,%s,%s);", data)
+                self.dbconn.commit()
+            except psycopg2.OperationalError as err:
+                self.log.error('Cannot insert ' + new_filename + ' into the documents table. ' + str(err))
 
             try:
                 os.remove(full_src_path)
