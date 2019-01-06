@@ -17,6 +17,8 @@ class Document(db.Model):
     status = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
 
+
+
     def __repr__(self):
         return '<document %r>' % self.title
 
