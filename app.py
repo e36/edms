@@ -6,6 +6,7 @@ import config
 
 app = Flask(__name__)
 
+app.config.from_object('config')
 
 # postgresql://scott:tiger@localhost/mydatabase
 app.config['SQLALCHEMY_DATABASE_URI'] = config.database['engine'] + "://" + config.database['user'] + ":" + config.database['password'] + "@" + config.database['hostname'] + "/" + config.database['database']
@@ -31,9 +32,9 @@ def make_session_permanent():
 
 @app.route('/')
 def index():
-    return dashboard()
-
-
-@app.route('/dashboard')
-def dashboard():
     return render_template('index.html')
+
+
+@app.route('/new')
+def dashboard():
+    return render_template('new.html')
