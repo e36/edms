@@ -36,5 +36,14 @@ def index():
 
 
 @app.route('/new')
-def dashboard():
-    return render_template('new.html')
+def new():
+
+    # this is the new queue, where newly uploaded files can be viewed.
+
+    # query all documents with the status NEW
+    new_docs = Document.query.filter_by(status="NEW").all()
+    thumb_dir = config.thumnail_directory
+
+    # data = {'data':new_docs, 'thumb_dir':thumb_dir}
+
+    return render_template('new.html', thumb_dir=thumb_dir, data=new_docs)
