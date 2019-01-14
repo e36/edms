@@ -3,7 +3,24 @@
 {% block style %}
 {% endblock %}
 {% block body %}
-NEW SHIT
+<div class = "container">
+    <div class="row">
+      {% for document in data %}
+        <div class="col-sm-6 col-md-4">
 
+
+            <div class="thumbnail">
+              <img src="{{'static/thumbnails/' + document.thumbnail_filename}}" alt="...">
+              <div class="caption">
+                <h3>{{document.title}}</h3>
+                <p>{{document.description}}</p>
+              </div>
+            </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+</div>
 
 {% endblock %}
