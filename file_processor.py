@@ -4,6 +4,7 @@ import shutil
 import logging
 import config
 import psycopg2
+import sys
 from wand.image import Image
 from datetime import datetime
 
@@ -16,12 +17,15 @@ class FileProcessor:
         #TODO create error file for dump folder errors
 
         # logger
-        self.log = logging.getLogger(__name__)
-        self.l_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        self.l_handler = logging.FileHandler(config.processor_log_file)
-        self.l_handler.setLevel(logging.INFO)
-        self.l_handler.setFormatter(self.l_format)
-        self.log.addHandler(self.l_handler)
+        # logging = logging.getLogger(__name__)
+        # self.l_format = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        # self.l_handler = logging.FileHandler(config.processor_log_file)
+        # self.l_handler.setLevel(logging.INFO)
+        # self.l_handler.setFormatter(self.l_format)
+        # logging.addHandler(self.l_handler)
+        logging.basicConfig(filename=config.processor_log_file,
+                            format='%(asctime)s - %(levelname)s - %(message)s',
+                            level=logging.DEBUG)
 
         # the directory where new files will be dropped for processing
         self.consumedir = config.drop_directory
@@ -47,7 +51,36 @@ class FileProcessor:
                 host=config.database['hostname']
             )
         except psycopg2.DatabaseError:
-            self.log.error('Cannot connect to database ' + config.database['database'])
+            logging.error('Cannot connect to database ' + config.database['database'])
+
+        # check and see if the directories exist
+        self.validate_directories()
+
+    def validate_directories(self):
+        """
+        Validates that the necessary directories exist.
+        :return: nothing
+        """
+
+        logging.info("Validating directories.")
+
+        if os.path.exists(self.storagedir):
+            logging.info("Storage directory at " + self.storagedir + " is found.")
+        else:
+            logging.error("Storage directory at " + self.storagedir + " cannot be found.")
+            sys.exit()
+
+        if os.path.exists(self.consumedir):
+            logging.info("Drop directory at " + self.consumedir + " is found.")
+        else:
+            logging.error("Drop directory at " + self.consumedir + " cannot be found.")
+            sys.exit()
+
+        if os.path.exists(self.thumbdir):
+            logging.info("Thumbnail directory at " + self.thumbdir + " is found.")
+        else:
+            logging.error("Thumbnail directory at " + self.thumbdir + " cannot be found.")
+            sys.exit()
 
     def scan_consume_dir(self):
         """
@@ -55,8 +88,8 @@ class FileProcessor:
         :return: nothing
         """
 
-        self.log.info('Beginning scan of ' + self.consumedir)
-        self.log.info('Destination directory: ' + self.storagedir)
+        logging.info('Beginning scan of ' + self.consumedir)
+        logging.info('Destination directory: ' + self.storagedir)
 
         try:
             # scan through and only add files to self.consumefiles
@@ -66,7 +99,7 @@ class FileProcessor:
                 if item.is_file():
                     self.consumefiles.append(item.name)
         except:
-            self.log.error('Scan error')
+            logging.error('Scan error')
 
     def process_file(self):
         """
@@ -78,6 +111,8 @@ class FileProcessor:
         """
 
         for file in self.consumefiles:
+
+            logging.info("Processing " + file)
 
             # split the file so we can get just the extension
             file_extension = file.split('.')[-1]
@@ -96,12 +131,12 @@ class FileProcessor:
 
             try:
                 # copy the original document to the storage location, with the new filename
-                self.log.info('Copying ' + file + ' --> ' + new_filename)
+                logging.info('Copying ' + file + ' --> ' + new_filename)
 
                 shutil.copy2(full_src_path, full_dst_path)
 
             except FileNotFoundError:
-                self.log.error('Cannot copy ' + file + ' --> ' + new_filename + '. Check that the destination directory exists and is writable.')
+                logging.error('Cannot copy ' + file + ' --> ' + new_filename + '. Check that the destination directory exists and is writable.')
 
             # TODO wrap this in some kind of exception
             if file_extension.lower() == 'pdf':
@@ -119,12 +154,12 @@ class FileProcessor:
                 c.execute("INSERT INTO document (title, description, document_filename, thumbnail_filename, original_filename, status, created) VALUES (%s,%s,%s,%s,%s,%s,%s);", data)
                 self.dbconn.commit()
             except psycopg2.OperationalError as err:
-                self.log.error('Cannot insert ' + new_filename + ' into the documents table. ' + str(err))
+                logging.error('Cannot insert ' + new_filename + ' into the documents table. ' + str(err))
 
             try:
                 os.remove(full_src_path)
             except:
-                self.log.error('Cannot delete ' + full_src_path)
+                logging.error('Cannot delete ' + full_src_path)
 
     def make_pdf_thumbnail(self, filename, uuid):
         """
@@ -138,6 +173,9 @@ class FileProcessor:
         # this is the factor by which the height and width will be multipled to get to the desired thumbnail target
         factor = 1
 
+        # create full filepath
+        full_filepath = self.consumedir + filename
+
         # create thumbnail filename
         thumbfilename = uuid + '_thumbnail.png'
         thumbfilepath = self.thumbdir + thumbfilename
@@ -146,7 +184,7 @@ class FileProcessor:
         temp_name = self.tempdir + thumbfilename
 
         # open the file
-        pdf_file = Image(filename=filename + "[0]")
+        pdf_file = Image(filename=full_filepath + "[0]")
 
         # get the first page
         # page_one = pdf_file.sequence[0]
@@ -188,8 +226,11 @@ class FileProcessor:
         # this is the factor by which the height and width will be multipled to get to the desired thumbnail target
         factor = 1
 
+        # create full filepath
+        full_filepath = self.consumedir + filename
+
         # open the file
-        image = Image(filename=filename)
+        image = Image(filename=full_filepath)
 
         # figure out the height and width, and resize it down to around width 160, height 160
         width = image.width
@@ -214,3 +255,4 @@ if __name__ == '__main__':
 
     fp.scan_consume_dir()
     fp.process_file()
+
