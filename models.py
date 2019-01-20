@@ -11,6 +11,7 @@ class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.Text)
     description = db.Column(db.Text)
+    document_id = db.Column(db.Text)
     document_filename = db.Column(db.Text)
     thumbnail_filename = db.Column(db.Text)
     original_filename = db.Column(db.Text)
