@@ -1,20 +1,32 @@
-from flask import Flask, session, request, render_template, Response
+from flask import (Flask, session, request, render_template, Response, Blueprint, flash, g, redirect, url_for)
 from models import db, Document, Tag
 from flask_migrate import Migrate
 from datetime import timedelta
+from serializer import ma
 import config
 
+# init app
 app = Flask(__name__)
 
+# get config shiz
 app.config.from_object('config')
 
 # postgresql://scott:tiger@localhost/mydatabase
 app.config['SQLALCHEMY_DATABASE_URI'] = config.database['engine'] + "://" + config.database['user'] + ":" + config.database['password'] + "@" + config.database['hostname'] + "/" + config.database['database']
 
+# SQLalchemy init
 db.init_app(app)
+
+# marshmallow / serializer init
+ma.init_app(app)
 
 # flask migrate support
 migrate = Migrate(app, db)
+
+# import and init blueprints
+from documents import documents
+
+app.register_blueprint(documents)
 
 
 # init DBs
@@ -47,3 +59,6 @@ def new():
     # data = {'data':new_docs, 'thumb_dir':thumb_dir}
 
     return render_template('new.html', thumb_dir=thumb_dir, data=new_docs)
+
+
+

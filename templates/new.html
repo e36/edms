@@ -10,10 +10,10 @@
 
 
             <div class="thumbnail">
-              <img src="{{'static/thumbnails/' + document.thumbnail_filename}}" alt="...">
+                <a href={{url_for('documents.document_index', id=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
               <div class="caption">
-                <h3>{{document.title}}</h3>
-                <p>{{document.description}}</p>
+                <h5>{{document.title}}</h5>
+                <h5><p>{{document.description}}</p></h5>
               </div>
             </div>
 

@@ -16,9 +16,9 @@ class Document(db.Model):
     thumbnail_filename = db.Column(db.Text)
     original_filename = db.Column(db.Text)
     status = db.Column(db.Text)
+    file_type = db.Column(db.Text)
     created = db.Column(db.DateTime, default=datetime.now)
-
-
+    tags = db.relationship('Tag', backref='document', lazy='joined')
 
     def __repr__(self):
         return '<document %r>' % self.title
