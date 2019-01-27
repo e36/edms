@@ -13,6 +13,9 @@ database = {
     'password':'password'
 }
 
+# postgresql://scott:tiger@localhost/mydatabase
+SQLALCHEMY_DATABASE_URI = database['engine'] + "://" + database['user'] + ":" + database['password'] + "@" + database['hostname'] + "/" + database['database']
+
 # the drop directory, where files will be picked up by the file processor job
 drop_directory='drop/'
 
