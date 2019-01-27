@@ -148,10 +148,10 @@ class FileProcessor:
                 thumbnail_filename = self.make_image_thumbnail(file, fuuid)
 
             try:
-                data = ('New Title', 'New Description', new_filename, thumbnail_filename, file, 'NEW', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), fuuid)
+                data = ('New Title', 'New Description', new_filename, thumbnail_filename, file, 'NEW', datetime.now().strftime("%Y-%m-%d %H:%M:%S"), fuuid, file_extension.lower())
                 print("inserting " + str(data))
                 c = self.dbconn.cursor()
-                c.execute("INSERT INTO document (title, description, document_filename, thumbnail_filename, original_filename, status, created, document_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s);", data)
+                c.execute("INSERT INTO document (title, description, document_filename, thumbnail_filename, original_filename, status, created, document_id ,file_type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);", data)
                 self.dbconn.commit()
             except psycopg2.OperationalError as err:
                 logging.error('Cannot insert ' + new_filename + ' into the documents table. ' + str(err))

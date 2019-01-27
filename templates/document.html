@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block title %}{{data.title}}{% endblock %}
+{% block style %}
+{% endblock %}
+
+{% block body %}
+<div class = "container-fluid">
+    <div class="row">
+        <div class="col-2 border bg-light">
+            <p><h2>{{data.title}}</h2></p>
+            <hr>
+            <p>{{data.description}}</p>
+            <p>Created: {{data.created}}</p>
+            <hr>
+            <p>Tags</p>
+            <p>
+                {% if not data.tags %}
+                No tags - Add one
+                {% endif %}
+            </p>
+        </div>
+        <div class="col">
+
+            {% if data.file_type == 'pdf' %}
+            <embed src="/static/documents/{{ data.document_filename }}"  width="800" height="850" />
+            {% else %}
+            <img class="img-fluid" src="/static/documents/{{ data.document_filename }}">
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
