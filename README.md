@@ -8,10 +8,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+What things you need to install the software and how to install them.
+
+- Python 3.6 or greater
+- Imagemagick 6.9.7 or greater
+- PostgreSQL 9.3 or greater
+
+Start by installing the requirements:
 
 ```
-Give examples
+# pip3 install -r requirements.txt
 ```
 
 ### Installing
