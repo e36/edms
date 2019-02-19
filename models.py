@@ -33,4 +33,4 @@ class Tag(db.Model):
     is_deleted = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
-        return '<tag %r>' % self.tag
+        return self.tag

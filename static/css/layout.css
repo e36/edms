@@ -1,3 +1,5 @@
-body {
+html, body {
         font-family: 'Montserrat', serif;
-        font-size: 24px;
+        font-size: 18px;
+        height: 100%;
+      }

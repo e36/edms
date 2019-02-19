@@ -4,12 +4,13 @@ from models import Document, Tag
 ma = Marshmallow()
 
 
-class DocumentSchema(ma.ModelSchema):
-    class Meta:
-        model = Document
-
-
 class TagSchema(ma.ModelSchema):
     class Meta:
         model = Tag
 
+
+class DocumentSchema(ma.ModelSchema):
+    class Meta:
+        model = Document
+
+    tags = ma.Nested(TagSchema, many=True)

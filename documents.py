@@ -7,13 +7,13 @@ import config
 documents = Blueprint('documents', __name__, template_folder='templates', static_folder='static/documents')
 
 
-@documents.route('/documents/<id>')
-def document_index(id):
+@documents.route('/documents/<int:docid>')
+def document_index(docid):
 
     # displays one specific document
 
     # query the document info
-    document_data = Document.query.get(id)
+    document_data = Document.query.get(docid)
 
     # filename = config.document_directory + document_data.document_filename
     # document_data.document_filename = filename
