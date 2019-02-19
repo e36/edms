@@ -10,7 +10,7 @@
 
 
             <div class="thumbnail">
-                <a href={{url_for('documents.document_index', id=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
+                <a href={{url_for('documents.document_index', docid=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
               <div class="caption">
                 <h5>{{document.title}}</h5>
                 <h5><p>{{document.description}}</p></h5>

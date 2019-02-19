@@ -1,32 +1,109 @@
 {% extends "layout.html" %}
 {% block title %}{{data.title}}{% endblock %}
-{% block style %}
-{% endblock %}
 
 {% block body %}
-<div class = "container-fluid">
-    <div class="row">
+<div class = "container-fluid h-100">
+    <div class="row h-100">
         <div class="col-2 border bg-light">
-            <p><h2>{{data.title}}</h2></p>
+            <div class="input-group mb-3">
+                <form id="updateDocument">
+                    <div class="form-group">
+                        <input type="hidden" id="document_id" value="{{data.id}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input class="form-control" id="title" type="text" value="{{data.title}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" class="form-control" id="description" value="{{data.description}}">
+                        <p></p>
+                        <p>Created: {{data.created}}</p>
+                    </div>
+                    <button class="btn btn-primary" id="updateNameDescBtn">Update</button>
+                </form>
+            </div>
             <hr>
-            <p>{{data.description}}</p>
-            <p>Created: {{data.created}}</p>
-            <hr>
-            <p>Tags</p>
-            <p>
-                {% if not data.tags %}
-                No tags - Add one
-                {% endif %}
-            </p>
+            <div>
+
+                <p>Tags</p>
+                <div class="input-group input-group-sm mb-3">
+                        <input type="text" class="form-control" placeholder="Add a tag" aria-label="Add a tag" aria-describedby="button-addon2" id="newTag">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="btnAddTag">Add!</button>
+                        </div>
+                </div>
+                <div>
+                    <ul>
+                    {% for tag in data.tags %}
+                        <li>{{ tag }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                    
+            </div>
         </div>
-        <div class="col">
+        <div class="col embed-responsive">
 
             {% if data.file_type == 'pdf' %}
-            <embed src="/static/documents/{{ data.document_filename }}"  width="800" height="850" />
+            <iframe class="embed-responsive-item" src="{{ url_for('static', filename='documents/' + data.document_filename) }}" height="100%" width="100%" ></iframe>
             {% else %}
-            <img class="img-fluid" src="/static/documents/{{ data.document_filename }}">
+            <img class="img-fluid" src="{{ url_for('static', filename='documents/' + data.document_filename) }}">
             {% endif %}
         </div>
     </div>
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+$( document ).ready(function() {
+
+    $("#updateNameDescBtn").on("click", function(e){
+
+        e.preventDefault();
+
+        $.ajax({
+           method: "POST",
+           url: "{{url_for('api.update_document')}}",
+           data: {
+            document_id : $("#document_id").val(),
+            title : $("#title").val(),
+            description : $("#description").val()
+           },
+           dataType: "json",
+           success: function(response) {
+                location.reload();
+           },
+
+        });
+    });
+
+    $("#btnAddTag").on("click", function(e){
+        
+        e.preventDefault();
+
+        $.ajax({
+           method: "POST",
+           url: "{{url_for('api.new_tag')}}",
+           data: {
+            document_id : $("#document_id").val(),
+            tag: $("#newTag").val()
+           },
+           dataType: "json",
+           success: function(response) {
+                location.reload();
+                $("#newTag").val("");
+           },
+
+        });
+        
+    });
+
+
+});
+
+</script>
+
 {% endblock %}

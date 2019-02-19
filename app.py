@@ -11,9 +11,6 @@ app = Flask(__name__)
 # get config shiz
 app.config.from_object('config')
 
-# postgresql://scott:tiger@localhost/mydatabase
-app.config['SQLALCHEMY_DATABASE_URI'] = config.database['engine'] + "://" + config.database['user'] + ":" + config.database['password'] + "@" + config.database['hostname'] + "/" + config.database['database']
-
 # SQLalchemy init
 db.init_app(app)
 
@@ -24,8 +21,10 @@ ma.init_app(app)
 migrate = Migrate(app, db)
 
 # import and init blueprints
+from api import api
 from documents import documents
 
+app.register_blueprint(api, url_prefix='/api/v1')
 app.register_blueprint(documents)
 
 
