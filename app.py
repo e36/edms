@@ -43,7 +43,10 @@ def make_session_permanent():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+
+    docs = Document.query.all()
+
+    return render_template('index.html', data=docs)
 
 
 @app.route('/new')

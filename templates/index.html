@@ -1,9 +1,29 @@
 {% extends "layout.html" %}
-{% block title %}EDMS{% endblock %}
+{% block title %}edms home{% endblock %}
 {% block style %}
 {% endblock %}
 {% block body %}
-WHAT THE HECK
+<div class = "container">
+    <div class="row">
+      {% for document in data %}
+        <div class="col-sm-6 col-md-4">
 
 
+            <div class="thumbnail form-check">
+                <a href={{url_for('documents.document_index', docid=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
+              <div class="caption">
+                  <p>{% if document.status == "NEW" %} <span class="badge badge-secondary">New</span>{% endif %}  {{document.title}}</p>
+                <p>{{document.description}}</p>
+              </div>
+            </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+</div>
+
+<div>
+<button class="btn btn-outline-secondary" type="button" id="btnTest">Test</button>
+</div>
 {% endblock %}
