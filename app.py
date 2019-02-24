@@ -56,7 +56,7 @@ def new():
 
     # query all documents with the status NEW
     new_docs = Document.query.filter_by(status="NEW").all()
-    thumb_dir = config.thumnail_directory
+    thumb_dir = config.thumbnail_directory
 
     # data = {'data':new_docs, 'thumb_dir':thumb_dir}
 
