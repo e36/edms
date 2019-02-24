@@ -7,14 +7,16 @@ import psycopg2
 import sys
 from wand.image import Image
 from datetime import datetime
+import argparse
 
 
 class FileProcessor:
 
     def __init__(self):
 
-        #TODO add checks for the folders and permissions.  Add defs for this in utils.py?
-        #TODO create error file for dump folder errors
+        # TODO create error file for dump folder errors
+
+        self.version = 1.0
 
         # logger
         # logging = logging.getLogger(__name__)
@@ -27,6 +29,8 @@ class FileProcessor:
                             format='%(asctime)s - %(levelname)s - %(message)s',
                             level=logging.DEBUG)
 
+        logging.info("Starting file processor version " + str(self.version))
+
         # the directory where new files will be dropped for processing
         self.consumedir = config.drop_directory
 
@@ -34,7 +38,7 @@ class FileProcessor:
         self.storagedir = config.document_directory
 
         # the directory where thumbnail images will be stored
-        self.thumbdir = config.thumnail_directory
+        self.thumbdir = config.thumbnail_directory
 
         # temp directory
         self.tempdir = config.temp_directory
@@ -100,6 +104,7 @@ class FileProcessor:
                     self.consumefiles.append(item.name)
         except:
             logging.error('Scan error')
+            sys.exit()
 
     def process_file(self):
         """
@@ -255,4 +260,3 @@ if __name__ == '__main__':
 
     fp.scan_consume_dir()
     fp.process_file()
-

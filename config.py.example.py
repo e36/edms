@@ -23,7 +23,7 @@ drop_directory='drop/'
 document_directory='static/documents/'
 
 # thumbnail directory, where the document thumbnails will be saved
-thumnail_directory='static/thumbnails/'
+thumbnail_directory='static/thumbnails/'
 
 # file processor logging file
 processor_log_file='processorlog.log'
