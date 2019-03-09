@@ -1,6 +1,7 @@
 from flask import Flask, session, request, render_template, Response, Blueprint, abort
 from models import Document, Tag, db
 from serializer import DocumentSchema, TagSchema
+import json
 
 api = Blueprint('api', __name__, template_folder='templates', static_folder='static/documents')
 
@@ -36,9 +37,6 @@ def update_document():
     if request.form['description']:
         document.description = request.form['description']
 
-    if document.status == 'NEW':
-        document.status = "OK"
-
     db.session.add(document)
     db.session.commit()
 
@@ -60,14 +58,40 @@ def new_tag():
         newtag = Tag(document_id=document_id, tag=tag, is_deleted=False)
         document.tags.append(newtag)
 
-        if document.status == 'NEW':
-            document.status = "OK"
-
         db.session.add(document)
         db.session.commit()
 
     schema = DocumentSchema()
     return schema.jsonify(document)
+
+
+@api.route('/new/bulk', methods=['POST'])
+def bulk_add_tag():
+    """
+    Adds a tag to multiple documents.  The payload is set up like this:
+    { 'tag': string,
+      'doc_ids': []
+    }
+    :return: nada
+    """
+
+    doc_ids = json.loads(request.form['doc_ids'])
+    tag_text = request.form['tag']
+
+    for docid in doc_ids:
+
+        document = Document.query.filter_by(id=docid).first_or_404()
+
+        if tag_text not in document.tags:
+
+            newtag = Tag(document_id=docid, tag=tag_text, is_deleted=False)
+            document.tags.append(newtag)
+
+            db.session.add(document)
+
+    db.session.commit()
+
+    return 'OK'
 
 
 @api.route('/test', methods=['GET'])
