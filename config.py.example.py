@@ -17,16 +17,16 @@ database = {
 SQLALCHEMY_DATABASE_URI = database['engine'] + "://" + database['user'] + ":" + database['password'] + "@" + database['hostname'] + "/" + database['database']
 
 # the drop directory, where files will be picked up by the file processor job
-drop_directory = 'drop/'
+drop_directory = '/home/user/project/drop/'
 
 # the storage directory, where the documents will be saved to once they've been processed
-document_directory = 'static/documents/'
+document_directory = '/home/user/project/static/documents/'
 
 # thumbnail directory, where the document thumbnails will be saved
-thumbnail_directory = 'static/thumbnails/'
+thumbnail_directory = '/home/user/project/static/thumbnails/'
 
 # file processor logging file
-processor_log_file = 'processorlog.log'
+processor_log_file = '/home/user/project/processorlog.log'
 
 # temp folder
 temp_directory = 'temp/'
