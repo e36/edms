@@ -94,6 +94,29 @@ def bulk_add_tag():
     return 'OK'
 
 
+@api.route('new/finish', methods=['POST'])
+def finish_documents():
+    """
+    Sets the status of the documents from NEW to OK, thereby releasing them to the main workflow.
+    { 'tag': string,
+      'doc_ids': []
+    }
+    :return:
+    """
+
+    doc_ids = json.loads(request.form['doc_ids'])
+
+    for docid in doc_ids:
+
+        document = Document.query.filter_by(id=docid).first_or_404()
+
+        document.status = "OK"
+
+        db.session.add(document)
+
+    db.session.commit()
+
+
 @api.route('/test', methods=['GET'])
 def test():
     return "Test!"

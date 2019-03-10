@@ -5,12 +5,20 @@
 {% block body %}
 <div class="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <form class="form-inline">
-            <input class="form-control mr-sm-2" type="search" placeholder="Add Tags" id="tag" aria-label="Add Tags">
-            <button class="btn btn-outline-success my-2 my-sm-0" id="btnAddTag" type="submit">Add Tag</button>
-        </form>
+        <ul class="navbar-nav my-lg-0">
+            <li class="nav-item">
+                <form class="form-inline">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Add Tags" id="tag" aria-label="Add Tags">
+                    <button class="btn btn-outline-success my-2 my-sm-0" id="btnAddTag" type="submit">Add Tag</button>
+                </form>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-outline-danger my-2 my-sm-0" id="btnFinish" type="button">Finish</button>
+            </li>
+        </ul>
     </nav>
 </div>
+
 <div class="container">
     <div class="row">
       {% for document in data %}
@@ -31,10 +39,6 @@
 
     </div>
 </div>
-<div>
-    <button class="btn btn-outline-secondary" type="button" id="btnTest">Test</button>
-</div>
-
 
 {% endblock %}
 
@@ -42,31 +46,16 @@
 <script>
 $( document ).ready(function() {
 
-
-    $("#btnTest").on("click", function(e){
-
-        var sList = "";
-        $('input:checkbox:checked').each(function () {
-            sList += $(this).attr("name") + " ";
-        });
-
-        alert(sList);
-
-
-    });
-
     $("#btnAddTag").on("click", function(e) {
 
         e.preventDefault();
 
         var sList = [];
-        $('input:checkbox:checked').each(function () {
-            sList.push( $(this).attr("name") );
-        });
-
-        //alert(sList);
+        sList = findSelected();
 
         sList = JSON.stringify(sList);
+
+        alert(sList);
 
         $.ajax({
            method: "POST",
@@ -81,13 +70,63 @@ $( document ).ready(function() {
            }
 
         });
+    });
 
+
+
+    $("#btnFinish").on("click", function(){
+
+        var ls = [];
+
+        ls = findSelected();
+
+        ls = JSON.stringify(ls);
+
+        $.confirm({
+            title: 'Done?',
+            content: 'Ready to complete?',
+            buttons: {
+                confirm: function () {
+
+                    $.ajax({
+                        method: "POST",
+                        url: "{{url_for('api.finish_documents')}}",
+                       data: {
+                            doc_ids : ls,
+                       },
+                       dataType: "json",
+                       success: function(response) {
+                            window.location.reload(true);
+                       }
+
+                    });
+                },
+                cancel: function () {
+
+                },
+
+
+            }
+        });
 
 
 
     });
 
+
+
 });
+
+
+function findSelected() {
+    var sList = [];
+
+    $('input:checkbox:checked').each(function () {
+            sList.push( $(this).attr("name") );
+    });
+
+    return sList;
+}
 
 </script>
 {% endblock %}
