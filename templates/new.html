@@ -29,8 +29,11 @@
                 <input type="checkbox" value="" id="{{ document.id }}" name="{{ document.id }}" />
                 <a href={{url_for('documents.document_index', docid=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
               <div class="caption">
-                <h5>{{document.title}}</h5>
-                <h5><p>{{document.description}}</p></h5>
+                  <p>{{document.title}}</p>
+                  <p>{{document.description}}</p>
+                  <p><ul>{% for tag in data.tags %}
+                        <li>{{ tag }}</li>
+                    {% endfor %}</ul></p>
               </div>
             </div>
 

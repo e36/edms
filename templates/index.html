@@ -12,8 +12,11 @@
             <div class="thumbnail form-check">
                 <a href={{url_for('documents.document_index', docid=document.id)}}><img src="{{'static/thumbnails/' + document.thumbnail_filename}}" class="img-thumbnail"></a>
               <div class="caption">
-                  <p>{% if document.status == "NEW" %} <span class="badge badge-secondary">New</span>{% endif %}  {{document.title}}</p>
-                <p>{{document.description}}</p>
+                  <p>{% if document.status == "NEW" %} <span class="badge badge-primary">New</span>{% endif %}  {{document.title}}</p>
+                  <p>{{document.description}}</p>
+                  <p><ul>{% for tag in document.tags %}
+                        <li>{{ tag }}</li>
+                    {% endfor %}</ul></p>
               </div>
             </div>
 

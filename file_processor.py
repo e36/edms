@@ -7,7 +7,6 @@ import psycopg2
 import sys
 from wand.image import Image
 from datetime import datetime
-import argparse
 
 
 class FileProcessor:
@@ -16,7 +15,7 @@ class FileProcessor:
 
         # TODO create error file for dump folder errors
 
-        self.version = 1.0
+        self.version = 1.2
 
         # logger
         # logging = logging.getLogger(__name__)
@@ -45,6 +44,9 @@ class FileProcessor:
 
         # the list of files that are found in the consumedir
         self.consumefiles = []
+
+        # the number of files found
+        self.number_of_files = 0
 
         # the database connection.  Will need to create a cursor every time it's used
         try:
@@ -86,6 +88,12 @@ class FileProcessor:
             logging.error("Thumbnail directory at " + self.thumbdir + " cannot be found.")
             sys.exit()
 
+        if os.path.exists(self.tempdir):
+            logging.info("Temp directory at " + self.tempdir + " is found.")
+        else:
+            logging.error("Temp directory at " + self.tempdir + " cannot be found.")
+            sys.exit()
+
     def scan_consume_dir(self):
         """
         Scans the consume directory and populates self.consumefiles with the list
@@ -100,11 +108,15 @@ class FileProcessor:
             dir_contents = os.scandir(self.consumedir)
 
             for item in dir_contents:
-                if item.is_file():
+                if not item.name.startswith('.') and item.is_file():
                     self.consumefiles.append(item.name)
         except:
             logging.error('Scan error')
             sys.exit()
+
+        # capture the number of files
+        self.number_of_files = len(self.consumefiles)
+        logging.info(f"{self.number_of_files} files found.")
 
     def process_file(self):
         """
