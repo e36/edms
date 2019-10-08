@@ -34,3 +34,6 @@ temp_directory = 'temp/'
 # thumbnail height and width targets.  The processor will attempt to get as close to this as possible
 thumbnail_height_target = 160
 thumbnail_width_target = 160
+
+# supported file types
+supported_file_types = ['jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff']

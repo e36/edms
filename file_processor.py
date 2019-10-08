@@ -110,8 +110,8 @@ class FileProcessor:
             for item in dir_contents:
                 if not item.name.startswith('.') and item.is_file():
                     self.consumefiles.append(item.name)
-        except:
-            logging.error('Scan error')
+        except Exception as e:
+            logging.error(f'Scan error: {str(e)}')
             sys.exit()
 
         # capture the number of files
@@ -160,7 +160,7 @@ class FileProcessor:
                 # if the file is a PDF, then send it through make_pdf_thumbnail
                 # it will return the new thumbnail filename, we'll insert that into the database
                 thumbnail_filename = self.make_pdf_thumbnail(file, fuuid)
-            elif file_extension.lower() in ['jpg', 'jpeg', 'gif', 'png', 'tif', 'tiff']:
+            elif file_extension.lower() in config.supported_file_types:
                 # if the file is an image then send it here
                 thumbnail_filename = self.make_image_thumbnail(file, fuuid)
 
